@@ -293,22 +293,48 @@
     starsContainer.appendChild(s);
   }
 
-  const numPetals = 11, outerR = 95, innerR = 26;
+  const numPetals = 14; 
+  const outerR = 90;
+  const innerR = 22;
   let petalMarkup = '';
-  for(let i=0;i<numPetals;i++){
-    const angle = (i/numPetals) * Math.PI * 2;
-    const tipX = Math.cos(angle) * outerR;
-    const tipY = Math.sin(angle) * outerR;
-    const baseX1 = Math.cos(angle - 0.28) * innerR;
-    const baseY1 = Math.sin(angle - 0.28) * innerR;
-    const baseX2 = Math.cos(angle + 0.28) * innerR;
-    const baseY2 = Math.sin(angle + 0.28) * innerR;
-    const ctrlX1 = Math.cos(angle - 0.15) * (outerR*0.6);
-    const ctrlY1 = Math.sin(angle - 0.15) * (outerR*0.6);
-    const ctrlX2 = Math.cos(angle + 0.15) * (outerR*0.6);
-    const ctrlY2 = Math.sin(angle + 0.15) * (outerR*0.6);
-    petalMarkup += `<path d="M ${baseX1} ${baseY1} Q ${ctrlX1} ${ctrlY1} ${tipX} ${tipY} Q ${ctrlX2} ${ctrlY2} ${baseX2} ${baseY2} Z" fill="url(#petalGrad)" stroke="#e0940a" stroke-width="0.6"/>`;
+
+  for(let i = 0; i < numPetals; i++){
+    const angle = ((i + 0.5) / numPetals) * Math.PI * 2;
+    petalMarkup += createOvalPetal(angle, outerR * 0.95, innerR, "rgba(220,140,10,0.85)");
   }
+
+  for(let i = 0; i < numPetals; i++){
+    const angle = (i / numPetals) * Math.PI * 2;
+    petalMarkup += createOvalPetal(angle, outerR, innerR, "#e0940a");
+  }
+
+  function createOvalPetal(angle, radius, innerRadius, strokeColor) {
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const perpX = -sin;
+    const perpY = cos;
+
+    const baseW = 7;
+    const midW = 18;
+    const tipW = 8;
+
+    const bx1 = cos * innerRadius + perpX * baseW,  by1 = sin * innerRadius + perpY * baseW;
+    const bx2 = cos * innerRadius - perpX * baseW,  by2 = sin * innerRadius - perpY * baseW;
+
+    const mx1 = cos * (radius * 0.55) + perpX * midW, my1 = sin * (radius * 0.55) + perpY * midW;
+    const mx2 = cos * (radius * 0.55) - perpX * midW, my2 = sin * (radius * 0.55) - perpY * midW;
+
+    const tx1 = cos * (radius * 0.95) + perpX * tipW, ty1 = sin * (radius * 0.95) + perpY * tipW;
+    const tx2 = cos * (radius * 0.95) - perpX * tipW, ty2 = sin * (radius * 0.95) - perpY * tipW;
+
+    const tipX = cos * radius, tipY = sin * radius;
+
+    return `<path d="M ${bx1} ${by1} 
+                     C ${mx1} ${my1}, ${tx1} ${ty1}, ${tipX} ${tipY} 
+                     C ${tx2} ${ty2}, ${mx2} ${my2}, ${bx2} ${by2} Z" 
+                  fill="url(#petalGrad)" stroke="${strokeColor}" stroke-width="0.6"/>`;
+  }
+
   document.getElementById('petals').innerHTML = petalMarkup;
 </script>
 
